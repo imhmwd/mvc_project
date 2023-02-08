@@ -17,7 +17,7 @@ abstract class Model
     protected $fillable = [];
     protected $hidden = [];
     protected $casts = [];
-    protected $primarykey = 'id';
+    protected $primaryKey = 'id';
     protected $created_at = 'created_at';
     protected $updated_at = 'updated_at';
     protected $deleted_at = null;
