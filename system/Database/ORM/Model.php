@@ -12,4 +12,14 @@ use System\Database\Traits\HasSoftDelete;
 abstract class Model
 {
     use HasCrud, HasAttribute, HasMethodCaller, HasQueryBuilder, HasRelation, HasSoftDelete;
+
+    protected $table;
+    protected $fillable = [];
+    protected $hidden = [];
+    protected $casts = [];
+    protected $primarykey = 'id';
+    protected $created_at = 'created_at';
+    protected $updated_at = 'updated_at';
+    protected $deleted_at = null;
+    protected $collection = [];
 }
