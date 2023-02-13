@@ -4,6 +4,7 @@ namespace System\Database\Traits;
 
 trait HasAttributes
 {
+    //test
 
     // collection[
     //      array[
