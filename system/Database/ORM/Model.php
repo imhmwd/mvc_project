@@ -11,7 +11,7 @@ use System\Database\Traits\HasSoftDelete;
 
 abstract class Model
 {
-    use HasCRUD, HasAttributes, HasMethodCaller, HasQueryBuilder, HasRelation, HasSoftDelete;
+    use HasCRUD, HasAttributes, HasMethodCaller, HasQueryBuilder, HasRelation ;
 
     protected $table;
     protected $fillable = [];
