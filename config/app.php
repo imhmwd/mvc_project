@@ -2,7 +2,7 @@
 
 define('APP_TITLE', 'mvc project');
 
-define('BASE_URL', 'http://localhost:8003');
+define('BASE_URL', 'http://localhost:8000');
 
 define('BASE_DIR', realpath(__DIR__."/../"));
 

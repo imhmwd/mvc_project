@@ -4,8 +4,7 @@ namespace System\Router;
 
 use ReflectionMethod;
 
-class Routing
-{
+class Routing{
 
     private $current_route;
     private $method_field;
@@ -20,106 +19,101 @@ class Routing
 
         global $routes;
         $this->routes = $routes;
-    }
-
-    public function run()
-    {
-        $match = $this->match();
-        if (empty($match)) {
-            $this->error404();
-        }
-
-
-        $classPath = str_replace('\\', '/', $match["class"]);
-        $path = BASE_DIR . "/app/Http/Controllers/" . $classPath . ".php";
-        if (!file_exists($path)) {
-            $this->error404();
-        }
-
-        $class = "\App\Http\Controllers\\" . $match["class"];
-        $object = new $class();
-        if (method_exists($object, $match["method"])) {
-            $reflection = new ReflectionMethod($class, $match["method"]);
-            $parameterCount = $reflection->getNumberOfParameters();
-            if ($parameterCount <= count($this->values)) {
-                call_user_func_array(array($object, $match["method"]), $this->values);
-            } else {
-                $this->error404();
-            }
-        } else {
-            $this->error404();
-        }
-    }
-
-    //note :
-    // route : category/edit/1
-    //currrent_route : category/edit/{id}
-
-    public function match()
-    {
-        $reservedRoutes = $this->routes[$this->method_field];
-        foreach ($reservedRoutes as $reservedRoute) {
-            if ($this->compare($reservedRoute['url']) == true) {
-                return ["class" => $reservedRoute['class'], "method" => $reservedRoute['method']];
-            } else {
-                $this->values = [];
-            }
-        }
-        return [];
-    }
-
-    private function compare($reservedRouteUrl)
-    {
-        // we have 3 part
-        // part 1 - / - domain.com/
-        if (trim($reservedRouteUrl, '/') === '') {
-            return trim($this->current_route[0], '/') === '' ? true : false;
-        }
-
-        //part 2
-        // domain.com/category/2 ==> check with reserved route
-        //check size route and current route
-        $reservedRouteUrlArray = explode('/', $reservedRouteUrl);
-        if (sizeof($this->current_route) != sizeof($reservedRouteUrlArray)) {
-            return false;
-        }
-
-        //part3
-        //check full route - articles/edit/1 * categories/edit/1
-        //variables
-        foreach ($this->current_route as $key => $currentRouteElement) {
-            $reservedRouteUrlElement = $reservedRouteUrlArray[$key];
-            if (substr($reservedRouteUrlElement, 0, 1) == "{" && substr($reservedRouteUrlElement, -1) == "}") {
-                array_push($this->values, $currentRouteElement);
-            } elseif ($reservedRouteUrlElement != $currentRouteElement) {
-                return false;
-            }
-        }
-        return true;
 
     }
 
-    public function error404()
-    {
+    public function run(){
 
-        http_response_code(404);
-        include __DIR__ . DIRECTORY_SEPARATOR . 'View' . DIRECTORY_SEPARATOR . '404.php';
-        exit;
+      $match = $this->match();
+      if(empty($match)){
+        $this->error404();
+      }
+     
+
+      $classPath = str_replace('\\', '/', $match["class"]);
+      $path = BASE_DIR . "/app/Http/Controllers/".$classPath.".php";
+      if(!file_exists($path)){
+        $this->error404();
+      }
+
+      $class = "\App\Http\Controllers\\".$match["class"];
+      $object = new $class();
+      if(method_exists($object, $match["method"])){
+        $reflection = new ReflectionMethod($class, $match["method"]);
+        $parameterCount = $reflection->getNumberOfParameters();
+        if($parameterCount <= count($this->values)){
+          call_user_func_array(array($object, $match["method"]), $this->values);
+        }
+        else{
+          $this->error404();
+        }
+      }
+      else{
+        $this->error404();
+      }
+    }
+
+    public function match(){
+
+      $reservedRoutes = $this->routes[$this->method_field];
+      foreach ($reservedRoutes as $reservedRoute) {
+        if($this->compare($reservedRoute['url']) == true){
+          return ["class" => $reservedRoute['class'], "method" => $reservedRoute['method']];
+        }
+        else{
+           $this->values = [];
+        }
+      }
+      return [];
+    }
+
+    private function compare($reservedRouteUrl){
+
+      //part1
+      if(trim($reservedRouteUrl, '/') === ''){
+        return trim($this->current_route[0], '/') === '' ? true : false;
+      }
+
+      //part2
+      $reservedRouteUrlArray = explode('/', $reservedRouteUrl);
+      if(sizeof($this->current_route) != sizeof($reservedRouteUrlArray)){
+        return false;
+      }
+
+      //part3
+      foreach ($this->current_route as $key => $currentRouteElement) {
+        $reservedRouteUrlElement = $reservedRouteUrlArray[$key];
+        if(substr($reservedRouteUrlElement, 0, 1) == "{" && substr($reservedRouteUrlElement, -1) == "}"){
+          array_push($this->values, $currentRouteElement);
+        }
+        elseif($reservedRouteUrlElement != $currentRouteElement){
+          return false;
+        }
+      }
+      return true;
 
     }
 
-    public function methodField()
-    {
+    public function error404(){
+
+      http_response_code(404);
+      include __DIR__ . DIRECTORY_SEPARATOR . 'View' . DIRECTORY_SEPARATOR . '404.php';
+      exit;
+
+    }
+
+    public function methodField(){
 
         $method_field = strtolower($_SERVER['REQUEST_METHOD']);
 
-        if ($method_field == 'post') {
+        if($method_field == 'post'){
 
-            if (isset($_POST['_method'])) {
+            if(isset($_POST['_method'])){
 
-                if ($_POST['_method'] == 'put') {
+                if($_POST['_method'] == 'put'){
                     $method_field = 'put';
-                } elseif ($_POST['_method'] == 'delete') {
+                }
+                elseif($_POST['_method'] == 'delete'){
                     $method_field = 'delete';
                 }
             }
@@ -128,6 +122,7 @@ class Routing
         return $method_field;
 
     }
+
 
 
 }
