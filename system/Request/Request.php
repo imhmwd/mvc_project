@@ -51,7 +51,7 @@ class Request
 
     public function file($name)
     {
-        return isset($this->files[$name]) ? $this->files[$name] : false;
+        return $this->files[$name] ?? false;
     }
 
     protected function postAttributes()
